@@ -31,12 +31,6 @@ export default ({ mode }) => {
     const HOSTNAME = removeHttp(process.env.VITE_APP_URL) ?? 'ia_cpuc_kol.test';
     return defineConfig({
         resolve: {
-            alias: {
-                '@': '/resources/js/Pages',
-                'components': '/resources/js/Components',
-                'composables': '/resources/js/Composables',
-                'mixins': '/resources/js/Mixins',
-            },
             dedupe: ['vue']
         },
         plugins: [
