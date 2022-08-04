@@ -43,8 +43,6 @@ export default ({ mode }) => {
             laravel({
                 input: [
                     'resources/css/app.css',
-                    'resources/css/dependencies.css',
-                    'resources/css/style.css',
                     'resources/js/app.js',
                 ],
                 refresh: true,

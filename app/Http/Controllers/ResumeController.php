@@ -14,6 +14,7 @@ class ResumeController extends Controller
     {
         $work_histories = $resume->workHistories->sortKeysDesc()->map(fn (WorkHistory $history) =>
             [
+                'id' => $history->work_history_id,
                 'title' => $history->title,
                 'company' => $history->company,
                 'detail' => $history->detail,
@@ -24,6 +25,7 @@ class ResumeController extends Controller
 
         $education = $resume->educations->sortKeysDesc()->map(fn (Education $education) =>
             [
+                'id' => $education->education_id,
                 'institute' => $education->institutional_name,
                 'major' => $education->education_major,
                 'start' => $education->started_study_at->format('m/Y'),
