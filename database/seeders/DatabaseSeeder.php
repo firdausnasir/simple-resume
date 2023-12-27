@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\WorkHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Http;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,61 +18,61 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Firdaus Nasir',
-            'email' => 'firdaus@gmail.com',
-        ]);
+        $user = User::factory()->create();
 
-        $resume = new Resume();
-        $resume->name = $user->name;
-        $resume->position = 'Junior Software Engineer';
-        $resume->contact_info = [
-            'phone' => '+60137641124',
-            'email' => $user->email,
-        ];
-        $resume->summary = 'Dedicated and result-oriented software engineer with 2 years of experience in developing and maintaining various web apps written in PHP and Laravel.';
+        $currentJobTitle = fake()->jobTitle();
 
         /* @var Resume $resume */
-        $resume = $user->resume()->save($resume);
-
-        $lorem_ipsum = Http::get('https://loripsum.net/api')->body();
+        $resume = $user
+            ->resume()
+            ->save(
+                new Resume([
+                    'name'         => $user->name,
+                    'position'     => $currentJobTitle,
+                    'contact_info' => [
+                        'phone' => fake()->phoneNumber(),
+                        'email' => fake()->email(),
+                    ],
+                    'summary' => implode("\n", fake()->paragraphs(2))
+                ])
+            );
 
         $work_to_insert = [
             [
-                'title' => 'System Engineer',
-                'company' => 'Digital Hustlaz Technologies Sdn Bhd',
+                'title'              => fake()->jobTitle(),
+                'company'            => fake()->company(),
                 'started_working_at' => Carbon::parse('July 2020'),
-                'ended_working_at' => Carbon::parse('July 2021'),
-                'detail' => $lorem_ipsum,
+                'ended_working_at'   => Carbon::parse('July 2021'),
+                'detail'             => implode("\n", fake()->paragraphs(5)),
             ],
             [
-                'title' => 'Software Engineer',
-                'company' => 'Involve Asia Technologies Sdn Bhd',
+                'title'              => $currentJobTitle,
+                'company'            => fake()->company(),
                 'started_working_at' => Carbon::parse('August 2021'),
-                'ended_working_at' => null,
-                'detail' => $lorem_ipsum,
+                'ended_working_at'   => null,
+                'detail'             => implode("\n", fake()->paragraphs(5)),
             ],
         ];
 
         $work = [];
         foreach ($work_to_insert as $item) {
-            $temp = new WorkHistory();
-            foreach ($item as $key => $value) {
-                $temp->{$key} = $value;
-            }
-
-            $work[] = $temp;
+            $work[] = new WorkHistory($item);
         }
 
-        $resume->workHistories()->saveMany($work);
+        $resume
+            ->workHistories()
+            ->saveMany($work);
 
-        $education = new Education();
-        $education->institutional_name = 'Multimedia University';
-        $education->education_major = 'BEng (Hons) Electronics majoring in Computer';
-        $education->started_study_at = Carbon::parse('June 2016');
-        $education->ended_study_at = Carbon::parse('May 2020');
-        $education->detail = 'CGPA: 3.46';
-
-        $resume->educations()->save($education);
+        $resume
+            ->educations()
+            ->save(
+                new Education([
+                    'institutional_name' => fake()->company(),
+                    'education_major'    => fake()->bs(),
+                    'started_study_at'   => Carbon::parse('June 2016'),
+                    'ended_study_at'     => Carbon::parse('May 2020'),
+                    'detail'             => implode("\n", fake()->paragraphs(5)),
+                ])
+            );
     }
 }
